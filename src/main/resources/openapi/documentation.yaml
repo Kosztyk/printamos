@@ -1,0 +1,151 @@
+openapi: "3.0.3"
+info:
+  title: "Application API"
+  description: "Application API"
+  version: "1.0.0"
+servers:
+  - url: "http://127.0.0.1:8080"
+  - url: "http://127.0.0.1:8081"
+paths:
+  /:
+    get:
+      description: "Hello World!"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Hello World!"
+  /add-printer:
+    post:
+      summary: "Adds a new printer using lpadmin command"
+      description: "Executes the lpadmin command to add a printer with the specified name and IP address or hostname."
+      tags:
+        - "Printers"
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - printer_name
+                - printer_ip
+              properties:
+                printer_name:
+                  type: string
+                  description: "Name of the printer (alphanumeric, underscores, hyphens, max 128 characters)."
+                  example: "MyPrinter"
+                  pattern: ^[a-zA-Z0-9_-]{1,128}$
+                printer_ip:
+                  type: string
+                  description: "IP address (IPv4) or hostname of the printer."
+                  example: "192.168.1.100"
+                  pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}$|^[a-zA-Z0-9.-]{1,255}$
+      responses:
+        '200':
+          description: "Printer added successfully"
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: "Output from the lpadmin command or success message."
+                example: "Command executed successfully"
+        '400':
+          description: "Invalid input"
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: "Error message indicating invalid or missing parameters."
+                example: "Invalid printer_name or printer_ip"
+        '500':
+          description: "Command execution failed"
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: "Error details from lpadmin command or execution failure."
+                example: "lpadmin: Unknown printer or class"
+  /printers:
+    get:
+      summary: Lists all available printers
+      description: Retrieves a list of all printers configured on the system using the lpstat -p command.
+      tags:
+        - Printers
+      responses:
+        '200':
+          description: List of available printers
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: Output from the lpstat -p command or a message if no printers are found.
+                example: |
+                  printer MyPrinter is idle. enabled since Mon 20 Oct 2025 12:00:00 AM CEST
+                  printer OfficePrinter is idle. enabled since Mon 20 Oct 2025 12:00:00 AM CEST
+        '500':
+          description: Failed to retrieve printer list
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: Error details from lpstat command or execution failure.
+                example: "Error executing lpstat command: Permission denied"
+
+  /print-job:
+    post:
+      summary: Uploads and prints a PDF or JPG file
+      description: Uploads a PDF or JPG file and sends it to the specified printer using the lp command.
+      tags:
+        - Print Jobs
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - printer_name
+                - file
+              properties:
+                printer_name:
+                  type: string
+                  description: Name of the printer to send the print job to (alphanumeric, underscores, hyphens, max 128 characters).
+                  example: MyPrinter
+                  pattern: ^[a-zA-Z0-9_-]{1,128}$
+                file:
+                  type: string
+                  format: binary
+                  description: PDF or JPG file to print.
+      responses:
+        '200':
+          description: Print job sent successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: Output from the lp command or success message.
+                example: request id is MyPrinter-123 (1 file)
+        '400':
+          description: Invalid input
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: Error message indicating invalid or missing parameters or file type.
+                example: Invalid file type (must be PDF or JPG)
+        '500':
+          description: Failed to process print job
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: Error details from lp command or file processing.
+                example: "Error executing lp command: Printer not found"
+components:
+  schemas: { }
