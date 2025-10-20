@@ -1,9 +1,10 @@
-name: Create and publish a Docker image
+name: 🐳 Build + Publish Multi-Platform Image
 
-# Configures this workflow to run every time a change is pushed to the branch called `release`.
 on:
+  workflow_dispatch:
   push:
     branches: [ 'main' ]
+    tags: [ '*.*' ]
 
 # Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
 env:
@@ -20,7 +21,7 @@ jobs:
       packages: write
       attestations: write
       id-token: write
-      #
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -53,6 +54,13 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=tag
+            type=semver,pattern={{version}},enable=false
+            type=semver,pattern={{major}}.x
+            type=raw,value=latest
+          flavor: |
+            latest=false
 
       # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
       # It uses the `context` parameter to define the build's context as the set of files located in the specified path. For more information,
