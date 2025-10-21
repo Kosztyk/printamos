@@ -10,15 +10,28 @@ ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktor-serialization-jackson = { module = "io.ktor:ktor-serialization-jackson", version.ref = "ktor" }
 ktor-server-csrf = { module = "io.ktor:ktor-server-csrf", version.ref = "ktor" }
 ktor-server-webjars = { module = "io.ktor:ktor-server-webjars", version.ref = "ktor" }
-jquery = { module = "org.webjars:jquery", version = "3.2.1" }
-ktor-server-host-common = { module = "io.ktor:ktor-server-host-common", version.ref = "ktor" }
 ktor-server-swagger = { module = "io.ktor:ktor-server-swagger", version.ref = "ktor" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktor" }
+ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+jquery = { module = "org.webjars:jquery", version = "3.2.1" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+
+[bundles]
+ktor = ["ktor-server-cors",
+    "ktor-server-content-negotiation",
+    "ktor-server-core",
+    "ktor-serialization-jackson",
+    "ktor-server-csrf",
+    "ktor-server-webjars",
+    "ktor-server-swagger",
+    "ktor-server-netty",
+    "ktor-server-config-yaml",
+    "ktor-server-status-pages"
+]

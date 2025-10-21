@@ -1,46 +1,63 @@
 # Printamos
 
-This project was created using the [Ktor Project Generator](https://start.ktor.io).
+Printing options:
 
-Here are some useful links to get you started:
+```shell
+pswidersk@pswidersk-Lafite-Pro-V-14M:~/REPOS/printamos$ lp --help
+Usage: lp [options] [--] [file(s)]
+       lp [options] -i id
+Options:
+-c                      Make a copy of the print file(s)
+-d destination          Specify the destination
+-E                      Encrypt the connection to the server
+-h server[:port]        Connect to the named server and port
+-H HH:MM                Hold the job until the specified UTC time
+-H hold                 Hold the job until released/resumed
+-H immediate            Print the job as soon as possible
+-H restart              Reprint the job
+-H resume               Resume a held job
+-i id                   Specify an existing job ID to modify
+-m                      Send an email notification when the job completes
+-n num-copies           Specify the number of copies to print
+-o option[=value]       Specify a printer-specific option
+-o job-sheets=standard  Print a banner page with the job
+-o media=size           Specify the media size to use
+-o number-up=N          Specify that input pages should be printed N-up (1, 2, 4, 6, 9, and 16 are supported)
+-o orientation-requested=N
+                        Specify portrait (3) or landscape (4) orientation
+-o print-quality=N      Specify the print quality - draft (3), normal (4), or best (5)
+-o sides=one-sided      Specify 1-sided printing
+-o sides=two-sided-long-edge
+                        Specify 2-sided portrait printing
+-o sides=two-sided-short-edge
+                        Specify 2-sided landscape printing
+-P page-list            Specify a list of pages to print
+-q priority             Specify the priority from low (1) to high (100)
+-s                      Be silent
+-t title                Specify the job title
+-U username             Specify the username to use for authentication
 
-- [Ktor Documentation](https://ktor.io/docs/home.html)
-- [Ktor GitHub page](https://github.com/ktorio/ktor)
-- The [Ktor Slack chat](https://app.slack.com/client/T09229ZC6/C0A974TJ9). You'll need to [request an invite](https://surveys.jetbrains.com/s3/kotlin-slack-sign-up) to join.
-
-## Features
-
-Here's a list of features included in this project:
-
-| Name                                                               | Description                                                                        |
-| --------------------------------------------------------------------|------------------------------------------------------------------------------------ |
-| [CORS](https://start.ktor.io/p/cors)                               | Enables Cross-Origin Resource Sharing (CORS)                                       |
-| [Content Negotiation](https://start.ktor.io/p/content-negotiation) | Provides automatic content conversion according to Content-Type and Accept headers |
-| [Routing](https://start.ktor.io/p/routing)                         | Provides a structured routing DSL                                                  |
-| [Jackson](https://start.ktor.io/p/ktor-jackson)                    | Handles JSON serialization using Jackson library                                   |
-| [CSRF](https://start.ktor.io/p/csrf)                               | Cross-site request forgery mitigation                                              |
-| [Webjars](https://start.ktor.io/p/webjars)                         | Bundles static assets into your built JAR file                                     |
-| [Static Content](https://start.ktor.io/p/static-content)           | Serves static files from defined locations                                         |
-| [Swagger](https://start.ktor.io/p/swagger)                         | Serves Swagger UI for your project                                                 |
-
-## Building & Running
-
-To build or run the project, use one of the following tasks:
-
-| Task                                    | Description                                                          |
-| -----------------------------------------|---------------------------------------------------------------------- |
-| `./gradlew test`                        | Run the tests                                                        |
-| `./gradlew build`                       | Build everything                                                     |
-| `./gradlew buildFatJar`                 | Build an executable JAR of the server with all dependencies included |
-| `./gradlew buildImage`                  | Build the docker image to use with the fat JAR                       |
-| `./gradlew publishImageToLocalRegistry` | Publish the docker image locally                                     |
-| `./gradlew run`                         | Run the server                                                       |
-| `./gradlew runDocker`                   | Run using the local docker image                                     |
-
-If the server starts successfully, you'll see the following output:
+pswidersk@pswidersk-Lafite-Pro-V-14M:/tmp$ lpstat --help
+Usage: lpstat [options]
+Options:
+-E                      Encrypt the connection to the server
+-h server[:port]        Connect to the named server and port
+-l                      Show verbose (long) output
+-U username             Specify the username to use for authentication
+-H                      Show the default server and port
+-W completed            Show completed jobs
+-W not-completed        Show pending jobs
+-a [destination(s)]     Show the accepting state of destinations
+-c [class(es)]          Show classes and their member printers
+-d                      Show the default destination
+-e                      Show available destinations on the network
+-o [destination(s)]     Show jobs
+-p [printer(s)]         Show the processing state of destinations
+-r                      Show whether the CUPS server is running
+-R                      Show the ranking of jobs
+-s                      Show a status summary
+-t                      Show all status information
+-u [user(s)]            Show jobs queued by the current or specified users
+-v [printer(s)]         Show the devices for each destination
 
 ```
-2024-12-04 14:32:45.584 [main] INFO  Application - Application started in 0.303 seconds.
-2024-12-04 14:32:45.682 [main] INFO  Application - Responding at http://0.0.0.0:8080
-```
-

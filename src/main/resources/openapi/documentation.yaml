@@ -5,21 +5,7 @@ info:
   version: "1.0.0"
 servers:
   - url: "http://127.0.0.1:8080"
-  - url: "http://127.0.0.1:8081"
 paths:
-  /:
-    get:
-      description: "Hello World!"
-      responses:
-        "200":
-          description: "OK"
-          content:
-            text/plain:
-              schema:
-                type: "string"
-              examples:
-                Example#1:
-                  value: "Hello World!"
   /add-printer:
     post:
       summary: "Adds a new printer using lpadmin command"
@@ -34,18 +20,20 @@ paths:
               type: object
               required:
                 - printer_name
-                - printer_ip
+                - printer_uri
               properties:
                 printer_name:
                   type: string
                   description: "Name of the printer (alphanumeric, underscores, hyphens, max 128 characters)."
                   example: "MyPrinter"
-                  pattern: ^[a-zA-Z0-9_-]{1,128}$
-                printer_ip:
+                printer_uri:
                   type: string
-                  description: "IP address (IPv4) or hostname of the printer."
-                  example: "192.168.1.100"
-                  pattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}$|^[a-zA-Z0-9.-]{1,255}$
+                  description: "URI of the printer."
+                  example: "ipp://192.168.1.100/ipp/print"
+                printer_model:
+                  type: string
+                  description: "Specify a standard model/PPD file for the printer"
+                  example: "everywhere"
       responses:
         '200':
           description: "Printer added successfully"
@@ -62,7 +50,7 @@ paths:
               schema:
                 type: string
                 description: "Error message indicating invalid or missing parameters."
-                example: "Invalid printer_name or printer_ip"
+                example: "Invalid printer_name or printer_uri"
         '500':
           description: "Command execution failed"
           content:
@@ -71,6 +59,41 @@ paths:
                 type: string
                 description: "Error details from lpadmin command or execution failure."
                 example: "lpadmin: Unknown printer or class"
+  /remove-printer:
+    delete:
+      summary: Remove a printer by name
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                printer_name:
+                  type: string
+                  description: Name of the printer to remove
+                  example: MyPrinter
+              required:
+                - printer_name
+      responses:
+        '200':
+          description: Printer removed successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: Missing printer_name
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
   /printers:
     get:
       summary: Lists all available printers
@@ -99,8 +122,8 @@ paths:
 
   /print-job:
     post:
-      summary: Uploads and prints a PDF or JPG file
-      description: Uploads a PDF or JPG file and sends it to the specified printer using the lp command.
+      summary: Uploads and prints a file
+      description: Uploads a file and sends it to the specified printer using the lp command.
       tags:
         - Print Jobs
       requestBody:
@@ -121,7 +144,27 @@ paths:
                 file:
                   type: string
                   format: binary
-                  description: PDF or JPG file to print.
+                  description: File to print.
+                copies:
+                  type: integer
+                  description: Number of copies to print (optional).
+                  minimum: 1
+                  default: 1
+                  example: 2
+                options:
+                  type: array
+                  description: Additional printer options (optional).
+                  items:
+                    type: string
+                  example: [
+                    "sides=two-sided-long-edge",
+                    "media=A4",
+                    "ColorModel=Gray",
+                    "ColorModel=Monochrome",
+                    "cupsPrintQuality=Draft", # "Normal", "High"
+                    "print-quality=3", # "Draft"
+                    "print-quality=4" # "Normal"
+                  ]
       responses:
         '200':
           description: Print job sent successfully
@@ -147,5 +190,71 @@ paths:
                 type: string
                 description: Error details from lp command or file processing.
                 example: "Error executing lp command: Printer not found"
+
+  /list-jobs:
+    get:
+      summary: List all print jobs
+      description: Executes the `lpstat` command to retrieve all print jobs from CUPS.
+      responses:
+        '200':
+          description: Successfully retrieved print jobs
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  printer1-123  user  1024  Wed 20 Oct 2025 11:00:00 AM CEST
+                  printer2-124  user  2048  Wed 20 Oct 2025 11:05:00 AM CEST
+        '500':
+          description: Internal server error, failed to execute command
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Error executing the print jobs command
+
+  /list-options:
+    post:
+      summary: List printer options
+      description: Retrieves available printer options for the specified printer using the `lpoptions` command.
+      tags:
+        - Printer Management
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - printer_name
+              properties:
+                printer_name:
+                  type: string
+                  description: The name of the printer to list options for.
+                  example: MyPrinter
+      responses:
+        '200':
+          description: Printer options retrieved successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  Resolution/Print Resolution: 600dpi *1200dpi 2400dpi
+                  Duplex/Duplex Printing: None *Long-Edge Short-Edge
+        '400':
+          description: Missing or invalid printer_name parameter
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Missing printer_name
+        '500':
+          description: Internal server error executing command
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Failed to execute lpoptions command
 components:
   schemas: { }

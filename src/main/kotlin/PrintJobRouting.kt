@@ -6,30 +6,43 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.utils.io.jvm.javaio.*
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import java.io.File
 import java.nio.file.Files
+
+private val validFileSuffixes = setOf(
+    ".pdf",
+    ".jpg",
+    ".jpeg",
+    ".png"
+)
 
 fun Route.printJobRouting() {
 
     post("/print-job") {
-        // Receive multipart form data
         val multipart = call.receiveMultipart()
         var printerName: String? = null
         var file: PartData.FileItem? = null
+        var fileContent: ByteArray? = null
+        var copies = 1
+        val options = mutableListOf<String>()
 
-        // Process each part
         multipart.forEachPart { part ->
             when (part) {
                 is PartData.FormItem -> {
-                    if (part.name == "printer_name") {
-                        printerName = part.value
+                    when (part.name) {
+                        "printer_name" -> printerName = part.value
+                        "copies" -> copies = part.value.toIntOrNull() ?: 1
+                        "options" -> {
+                            // Assuming options are sent as repeated parts or comma-separated string
+                            options.addAll(part.value.splitByCommas())
+                        }
                     }
                 }
 
                 is PartData.FileItem -> {
                     if (part.name == "file") {
                         file = part
+                        fileContent = part.provider().toInputStream().readBytes()
                     }
                 }
 
@@ -40,59 +53,40 @@ fun Route.printJobRouting() {
             part.dispose()
         }
 
-        // Validate inputs
-        if (printerName == null || file == null) {
+        if (printerName == null || file == null || fileContent == null) {
             call.respond(HttpStatusCode.BadRequest, "Missing printer_name or file")
             return@post
         }
 
-        if (!isValidPrinterName(printerName)) {
-            call.respond(HttpStatusCode.BadRequest, "Invalid printer_name")
-            return@post
+        val fileName = file.originalFileName?.lowercase() ?: "uploaded_file"
+        val isValidFileType = validFileSuffixes.any {
+            fileName.endsWith(it)
         }
 
-        // Validate file type (PDF or JPG)
-        val fileName = file.originalFileName?.lowercase() ?: ""
-        if (!fileName.endsWith(".pdf") && !fileName.endsWith(".jpg") && !fileName.endsWith(".jpeg")) {
-            call.respond(HttpStatusCode.BadRequest, "Invalid file type (must be PDF or JPG)")
+        if (!isValidFileType) {
+            call.respond(HttpStatusCode.BadRequest, "Invalid file type (must be PDF, JPG or PNG)")
             return@post
         }
-
-        // Save the file temporarily
-        val tempFile = Files.createTempFile("print-", fileName).toFile()
+        val tempFile = Files.createTempFile("print_", "_$fileName").toFile()
         try {
-            file.provider().toInputStream().use { input ->
-                tempFile.outputStream().use { output ->
-                    input.copyTo(output)
-                }
-            }
+            File("build/$fileName").writeBytes(fileContent)
 
-            // Execute lp command to print the file
-            val command = listOf(
+            tempFile.writeBytes(fileContent)
+            val command = mutableListOf(
                 "lp",
+                "-E",
                 "-d", printerName,
-                tempFile.absolutePath
             )
-            val process = ProcessBuilder(command).start()
-            val output = StringBuilder()
-            val error = StringBuilder()
+            command += listOf("-n", copies.toString())
+            options.forEach { command += listOf("-o", it) }
+            command += tempFile.absolutePath
 
-            BufferedReader(InputStreamReader(process.inputStream)).use { reader ->
-                reader.lines().forEach { output.append(it).append("\n") }
-            }
+            val out = execCommand(command)
 
-            BufferedReader(InputStreamReader(process.errorStream)).use { reader ->
-                reader.lines().forEach { error.append(it).append("\n") }
-            }
-
-            val exitCode = process.waitFor()
-
-            if (exitCode == 0) {
-                call.respond(HttpStatusCode.OK, output.toString().ifEmpty { "Print job sent successfully" })
+            if (out.success) {
+                call.respond(HttpStatusCode.OK, out.output.ifEmpty { "Print job sent successfully" })
             } else {
-                call.respond(
-                    HttpStatusCode.InternalServerError,
-                    error.toString().ifEmpty { "Command failed with exit code $exitCode" })
+                call.respond(HttpStatusCode.InternalServerError, out.errorMessage)
             }
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError, "Error processing print job: ${e.message}")
@@ -100,4 +94,21 @@ fun Route.printJobRouting() {
             tempFile.delete()
         }
     }
+
+    get("/list-jobs") {
+        val command = listOf(
+            "lpstat",
+            "-E",
+            "-lW", "all"
+        )
+
+        val out = execCommand(command)
+
+        if (out.success) {
+            call.respond(HttpStatusCode.OK, out.output.ifEmpty { "No output" })
+        } else {
+            call.respond(HttpStatusCode.InternalServerError, out.errorMessage)
+        }
+    }
+
 }
