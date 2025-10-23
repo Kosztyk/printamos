@@ -6,7 +6,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.utils.io.jvm.javaio.*
-import java.io.File
 import java.nio.file.Files
 
 private val validFileSuffixes = setOf(
@@ -69,8 +68,6 @@ fun Route.printJobRouting() {
         }
         val tempFile = Files.createTempFile("print_", "_$fileName").toFile()
         try {
-            File("build/$fileName").writeBytes(fileContent)
-
             tempFile.writeBytes(fileContent)
             val command = mutableListOf(
                 "lp",

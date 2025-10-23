@@ -12,6 +12,7 @@ fun Application.configureSecurity() {
         allowOrigin("http://127.0.0.1")
         allowOrigin("http://localhost:8080")
         allowOrigin("http://127.0.0.1:8080")
+        allowOrigin("http://127.0.0.1:5500")
         publicHost?.let {
             allowOrigin("https://$it")
         }

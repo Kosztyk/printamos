@@ -13,7 +13,7 @@ RUN addgroup -S appgroup && adduser -S -G appgroup appuser \
 
 # Adjust CUPS configuration permissions for non-root user
 RUN mkdir -p /var/run/cups /var/spool/cups /var/log/cups \
-    && chown -R appuser:appgroup /var/run/cups /var/spool/cups /var/log/cups /usr/lib/cups
+    && chown -R appuser:appgroup /var/run/cups /var/spool/cups /var/log/cups /usr/lib/cups /etc/cups
 
 # Create application directory and set ownership
 WORKDIR /app
@@ -21,6 +21,7 @@ RUN chown appuser:appgroup /app
 
 # Copy the server JAR and set ownership
 COPY --chown=appuser:appgroup build/libs/printamos-web-all.jar /app/server.jar
+COPY --chown=appuser:appgroup cupsd.conf /etc/cups/cupsd.conf
 
 # Switch to non-root user
 USER appuser
@@ -28,4 +29,4 @@ USER appuser
 # Expose the port for the Java server (8080)
 EXPOSE 8080
 
-CMD ["sh", "-c", "cupsd && java -jar /app/server.jar"]
+CMD ["sh", "-c", "cupsd && java --enable-native-access=ALL-UNNAMED -jar /app/server.jar"]

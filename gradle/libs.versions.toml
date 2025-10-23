@@ -9,7 +9,6 @@ ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negoti
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktor-serialization-jackson = { module = "io.ktor:ktor-serialization-jackson", version.ref = "ktor" }
 ktor-server-csrf = { module = "io.ktor:ktor-server-csrf", version.ref = "ktor" }
-ktor-server-webjars = { module = "io.ktor:ktor-server-webjars", version.ref = "ktor" }
 ktor-server-swagger = { module = "io.ktor:ktor-server-swagger", version.ref = "ktor" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
 ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktor" }
@@ -29,7 +28,7 @@ ktor = ["ktor-server-cors",
     "ktor-server-core",
     "ktor-serialization-jackson",
     "ktor-server-csrf",
-    "ktor-server-webjars",
+#    "ktor-server-webjars",
     "ktor-server-swagger",
     "ktor-server-netty",
     "ktor-server-config-yaml",
