@@ -3,10 +3,12 @@ import org.apache.tools.ant.filters.ReplaceTokens
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
+    alias(libs.plugins.axiom.release)
 }
 
 group = "com.pswidersk"
-version = "0.0.1"
+
+version = scmVersion.version
 
 application {
     mainClass = "io.ktor.server.netty.EngineMain"
