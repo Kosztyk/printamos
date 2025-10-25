@@ -39,3 +39,5 @@ It is possible to easily add the Printamos service as follows:
 ```
 
 The Printamos Web UI will be available at `http://localhost:8097` on host.
+
+## [Releases](https://github.com/PrzemyslawSwiderski/printamos/releases)
