@@ -3,8 +3,7 @@ name: 🐳 Build + Publish Multi-Platform Image
 on:
   workflow_dispatch:
   push:
-    branches: [ 'main' ]
-    tags: [ '*.*' ]
+    tags: ["*.*"]
 
 # Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
 env:
@@ -54,13 +53,11 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # Only produce the pushed/tagged version (when a tag event) and `latest`.
+          # This avoids producing multiple semver-derived or sha-based tags.
           tags: |
             type=ref,event=tag
-            type=semver,pattern={{version}},enable=false
-            type=semver,pattern={{major}}.x
             type=raw,value=latest
-          flavor: |
-            latest=false
 
       # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
       # It uses the `context` parameter to define the build's context as the set of files located in the specified path. For more information,
@@ -74,7 +71,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      
+
       # This step generates an artifact attestation for the image, which is an unforgeable statement about where and how it was built.
       # It increases supply chain security for people who consume the image.
       # For more information, see [Using artifact attestations to establish provenance for builds](/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds).
@@ -84,4 +81,3 @@ jobs:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
-      
