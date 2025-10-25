@@ -2,6 +2,7 @@
 kotlin = "2.2.20"
 ktor = "3.3.0"
 logback = "1.5.20"
+axiom = "1.21.0"
 
 [libraries]
 ktor-server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktor" }
@@ -20,6 +21,7 @@ kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+axiom-release = { id = "pl.allegro.tech.build.axion-release", version.ref = "axiom" }
 
 [bundles]
 ktor = ["ktor-server-cors",
