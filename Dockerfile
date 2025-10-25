@@ -1,33 +1,30 @@
 FROM eclipse-temurin:25-jre-alpine
 
-# Install cups and dbus, clean up apk cache to reduce image size
+# install runtime packages and tini (small init)
 RUN apk add --no-cache \
     cups \
     cups-filters \
     dbus \
-    && rm -rf /var/cache/apk/*
-
-# Create non-root user and group, add appuser to lp group
-RUN addgroup -S appgroup && adduser -S -G appgroup appuser \
+    tini \
+    && addgroup -S appgroup \
+    && adduser -S -G appgroup appuser \
     && addgroup appuser lp \
-    && addgroup appuser lpadmin
+    && addgroup appuser lpadmin \
+    && mkdir -p /var/run/cups /var/spool/cups /var/log/cups /app \
+    && chown -R appuser:appgroup /var/run/cups /var/spool/cups /var/log/cups /usr/lib/cups /etc/cups /app
 
-# Adjust CUPS configuration permissions for non-root user
-RUN mkdir -p /var/run/cups /var/spool/cups /var/log/cups \
-    && chown -R appuser:appgroup /var/run/cups /var/spool/cups /var/log/cups /usr/lib/cups /etc/cups
-
-# Create application directory and set ownership
 WORKDIR /app
-RUN chown appuser:appgroup /app
 
-# Copy the server JAR and set ownership
+# copy jar and config, set ownership in one step
 COPY --chown=appuser:appgroup build/libs/printamos-all.jar /app/server.jar
 COPY --chown=appuser:appgroup cupsd.conf /etc/cups/cupsd.conf
 
-# Switch to non-root user
+# Add a small entrypoint script (create it or COPY it from repo)
+COPY --chown=appuser:appgroup docker/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
 USER appuser
 
-# Expose the port for the Java server (8080)
 EXPOSE 8080
 
-CMD ["sh", "-c", "cupsd && java --enable-native-access=ALL-UNNAMED -jar /app/server.jar"]
+ENTRYPOINT ["/sbin/tini", "--", "/app/entrypoint.sh"]
