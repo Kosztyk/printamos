@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
@@ -12,8 +14,19 @@ application {
 
 dependencies {
     implementation(libs.bundles.ktor)
-    implementation(libs.jquery)
     implementation(libs.logback.classic)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
+}
+
+val buildId: String = "${project.version}-${System.currentTimeMillis()}"
+
+tasks.processResources {
+    filesMatching("static/index.html") {
+        filter<ReplaceTokens>(
+            "tokens" to mapOf(
+                "buildId" to buildId
+            )
+        )
+    }
 }
