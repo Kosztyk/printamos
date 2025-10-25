@@ -20,7 +20,7 @@ WORKDIR /app
 RUN chown appuser:appgroup /app
 
 # Copy the server JAR and set ownership
-COPY --chown=appuser:appgroup build/libs/printamos-web-all.jar /app/server.jar
+COPY --chown=appuser:appgroup build/libs/printamos-all.jar /app/server.jar
 COPY --chown=appuser:appgroup cupsd.conf /etc/cups/cupsd.conf
 
 # Switch to non-root user
