@@ -94,14 +94,6 @@
       statusMessage.textContent = 'Please choose a file to upload.';
       return;
     }
-    const allowed = ['application/pdf', 'image/jpeg'];
-    if (!allowed.includes(file.type)) {
-      const name = file.name.toLowerCase();
-      if (!(name.endsWith('.pdf') || name.endsWith('.jpg') || name.endsWith('.jpeg'))) {
-        statusMessage.textContent = 'Invalid file type. Use PDF or JPG.';
-        return;
-      }
-    }
 
     const formData = new FormData();
     formData.append('printer_name', selectedPrinter);

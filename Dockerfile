@@ -3,6 +3,7 @@ FROM eclipse-temurin:25-jre-alpine
 # Install cups and dbus, clean up apk cache to reduce image size
 RUN apk add --no-cache \
     cups \
+    cups-filters \
     dbus \
     && rm -rf /var/cache/apk/*
 
