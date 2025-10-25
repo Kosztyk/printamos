@@ -1,4 +1,4 @@
-rootProject.name = "printamos-web"
+rootProject.name = "printamos"
 
 dependencyResolutionManagement {
     repositories {

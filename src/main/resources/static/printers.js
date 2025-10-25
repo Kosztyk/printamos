@@ -3,6 +3,10 @@
   const printerStatusMessage = document.getElementById('printerStatusMessage');
   const printersList = document.getElementById('printersList');
   const printerSelect = document.getElementById('printerSelect');
+  const showOptionsLink = document.getElementById('showOptionsLink');
+  const showOptionsSpinner = document.getElementById('showOptionsSpinner');
+  const listOptionsBox = document.getElementById('listOptionsBox');
+  const listOptionsCollapse = document.getElementById('listOptionsCollapse');
 
   function showStatus(message, color = 'text-light') {
     printerStatusMessage.textContent = message;
@@ -60,6 +64,23 @@
         opt.textContent = `${printer.name} – ${printer.description || ''}`;
         printerSelect.appendChild(opt);
       });
+      // Update Show Options button state after populating
+      setShowOptionsDisabledState();
+    }
+  }
+
+  // Show/hide Show Options link depending on selection
+  function setShowOptionsDisabledState() {
+    if (!showOptionsLink || !printerSelect) return;
+    if (printerSelect.value) {
+      // show link
+      showOptionsLink.classList.remove('d-none');
+      showOptionsLink.removeAttribute('aria-disabled');
+      showOptionsLink.classList.remove('disabled');
+    } else {
+      // hide link
+      showOptionsLink.classList.add('d-none');
+      showOptionsLink.setAttribute('aria-disabled', 'true');
     }
   }
 
@@ -129,4 +150,59 @@
 
   // Initialize printer list on page load
   document.addEventListener('DOMContentLoaded', loadPrinters);
+
+  // Ensure Show Options button state updates when selection changes
+  if (printerSelect) {
+    printerSelect.addEventListener('change', () => {
+      setShowOptionsDisabledState();
+      // hide options collapse if no selection
+      if (!printerSelect.value && listOptionsCollapse) {
+        const existing = bootstrap.Collapse.getInstance(listOptionsCollapse) || new bootstrap.Collapse(listOptionsCollapse, { toggle: false });
+        existing.hide();
+      }
+    });
+  }
+
+  // Show Options link click handler
+  if (showOptionsLink) {
+    showOptionsLink.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (!printerSelect || !printerSelect.value) return;
+      showStatus('Listing printer options...');
+      // visually disable link while loading
+      showOptionsLink.classList.add('disabled');
+      showOptionsLink.setAttribute('aria-disabled', 'true');
+      if (showOptionsSpinner) showOptionsSpinner.classList.remove('visually-hidden');
+      try {
+        const res = await sendForm('/api/v1/list-options', 'POST', { printer_name: printerSelect.value });
+        if (res.ok) {
+          let display = res.text || '';
+          try {
+            const parsed = JSON.parse(display);
+            display = JSON.stringify(parsed, null, 2);
+          } catch (e) {
+            // not JSON; keep as-is
+          }
+
+          if (listOptionsBox) listOptionsBox.textContent = display || 'No options returned.';
+          // show collapse
+          if (listOptionsCollapse) {
+            const bsCol = bootstrap.Collapse.getInstance(listOptionsCollapse) || new bootstrap.Collapse(listOptionsCollapse, { toggle: false });
+            bsCol.show();
+          }
+          showStatus('Options loaded.', 'text-success');
+        } else {
+          if (listOptionsBox) listOptionsBox.textContent = `Error loading options (${res.status})`;
+          showStatus('Error loading options.', 'text-danger');
+        }
+      } catch (err) {
+        if (listOptionsBox) listOptionsBox.textContent = 'Network error: ' + err.message;
+        showStatus('Network error: ' + err.message, 'text-danger');
+      } finally {
+        if (showOptionsSpinner) showOptionsSpinner.classList.add('visually-hidden');
+        showOptionsLink.classList.remove('disabled');
+        showOptionsLink.removeAttribute('aria-disabled');
+      }
+    });
+  }
 })();

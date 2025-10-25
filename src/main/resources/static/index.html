@@ -28,116 +28,171 @@
 </head>
 
 <body>
-    <div class="container py-4">
-        <div class="row justify-content-center">
+    <div class="container py-4 justify-content-center">
 
-            <!-- Manage Printers -->
-            <div class="col-12 col-md-10 col-lg-8">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h1 class="h4 mb-3">Manage Printers</h1>
+        <!-- Manage Printers -->
+        <div class="col-12 col-md-10 col-lg-8 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3>Manage Printers</h3>
 
-                        <!-- Add printer -->
-                        <form id="addPrinterForm" class="mb-3 needs-validation" novalidate>
-                            <h6>Add Printer</h6>
-                            <div class="mb-2">
-                                <label for="addPrinterName">Printer Name</label>
-                                <input id="addPrinterName" name="printer_name" type="text" class="form-control" required
-                                    placeholder="Printer name" pattern="^[a-zA-Z0-9_\-]{1,128}$">
-                            </div>
-                            <div class="mb-2">
-                                <label for="addPrinterUri">Printer Uri</label>
-                                <input id="addPrinterUri" name="printer_uri" type="text" class="form-control" required
-                                    placeholder="Printer URI (e.g. ipp://192.168.1.100/ipp/print)">
-                            </div>
-                            <div class="mb-2">
-                                <label for="addPrinterModel">Printer Model</label>
-                                <input id="addPrinterModel" name="printer_model" type="text" class="form-control"
-                                    placeholder="Model/PPD (optional, e.g. everywhere)">
-                            </div>
-                            <button type="submit" id="addPrinterBtn" class="btn btn-success btn-sm">Add Printer</button>
-                        </form>
-
-                        <div id="printerStatusBox" class="p-3 border rounded bg-dark-subtle small mb-3">
-                            <strong>Status:</strong> <span id="printerStatusMessage">Idle</span>
+                    <!-- Add printer -->
+                    <form id="addPrinterForm" class="mb-2 needs-validation" novalidate>
+                        <h5>Add Printer</h5>
+                        <div class="mb-2">
+                            <label for="addPrinterName">Printer Name</label>
+                            <input id="addPrinterName" name="printer_name" type="text" class="form-control" required
+                                placeholder="Printer name" pattern="^[a-zA-Z0-9_\-]{1,128}$">
                         </div>
-
-                        <!-- Printers list -->
-                        <div>
-                            <h6>Available Printers</h6>
-                            <ul id="printersList" class="list-group small"></ul>
+                        <div class="mb-2">
+                            <label for="addPrinterUri">Printer Uri</label>
+                            <input id="addPrinterUri" name="printer_uri" type="text" class="form-control" required
+                                placeholder="Printer URI (e.g. ipp://192.168.1.100/ipp/print)">
+                            <div class="mb-2">
+                                <a class="text-decoration-none" data-bs-toggle="collapse" href="#uriHelp" role="button"
+                                    aria-expanded="false">
+                                    Show example URIs ▾
+                                </a>
+                                <div class="collapse" id="uriHelp">
+                                    <div class="form-text">
+                                        <pre class="mb-2 p-3">
+ipp://192.168.1.100:631/ipp/print   IPP printer (most modern network printers)
+lpd://192.168.1.100/queue           LPD printer (legacy printers)
+socket://192.168.1.100:9100         Socket/JetDirect printer
+http://192.168.1.100:631/printers/  HTTP printer (some network printers)
+usb://manufacturer/model            USB printer
+file:///dev/null                    Mock printer (for testing)
+</pre>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                        <div class="mb-2">
+                            <label for="addPrinterModel">Printer Model</label>
+                            <input id="addPrinterModel" name="printer_model" type="text" class="form-control"
+                                placeholder="Model/PPD (optional, e.g. everywhere)">
+                        </div>
+                        <hr />
+                        <button type="submit" id="addPrinterBtn" class="btn btn-success btn-sm">Add Printer</button>
+                    </form>
+
+                    <div id="printerStatusBox" class="p-2 border rounded bg-dark-subtle small mb-2">
+                        <strong>Status:</strong> <span id="printerStatusMessage">Idle</span>
+                    </div>
+
+                    <!-- Printers list -->
+                    <div>
+                        <h6>Available Printers</h6>
+                        <ul id="printersList" class="list-group small"></ul>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Upload & Print -->
-            <div class="col-12 col-md-10 col-lg-8 mt-4 mt-md-3">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h1 class="h4 mb-3">Upload & Print</h1>
+        <!-- Upload & Print -->
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3>Upload & Print</h3>
 
-                        <form id="printForm" class="needs-validation" novalidate>
+                    <form id="printForm" class="needs-validation" novalidate>
+                        <div class="mb-2">
+                            <label for="printerSelect" class="form-label">Select Printer</label>
+                            <select id="printerSelect" name="printer_name" required class="form-select">
+                                <option value="" selected disabled>Loading printers...</option>
+                            </select>
+                            <div class="invalid-feedback">Please select a printer.</div>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="printerSelect" class="form-label">Select Printer</label>
-                                <select id="printerSelect" name="printer_name" required class="form-select">
-                                    <option value="" selected disabled>Loading printers...</option>
-                                </select>
-                                <div class="invalid-feedback">Please select a printer.</div>
+                        <!-- Show Options link (appears only when a printer is selected) -->
+                        <div class="mb-2">
+                            <a id="showOptionsLink" class="text-decoration-none d-none" data-bs-toggle="collapse"
+                                href="#listOptionsCollapse" role="button" aria-expanded="false">
+                                <span id="showOptionsSpinner" class="spinner-grow spinner-grow-sm visually-hidden"
+                                    role="status" aria-hidden="true"></span>
+                                Show Options ▾
+                            </a>
+                        </div>
+
+                        <div class="collapse mt-2" id="listOptionsCollapse">
+                            <div class="card card-body bg-dark-subtle small">
+                                <strong>Printer options:</strong>
+                                <pre id="listOptionsBox" class="mb-0">No options loaded.</pre>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label for="fileInput" class="form-label">File to print</label>
+                            <input id="fileInput" name="file" type="file" required class="form-control p-4"
+                                accept=".pdf,.jpg,.jpeg" style="min-height: 100px; cursor: pointer;" />
+                            <div class="form-text">Accepted: .pdf, .jpg, .jpeg</div>
+                            <div class="invalid-feedback">Please supply a valid file.</div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-3">
+                                <label for="copies" class="form-label">Copies</label>
+                                <input id="copies" name="copies" type="number" class="form-control" min="1" value="1"
+                                    required />
+                                <div class="invalid-feedback">Enter a number ≥ 1.</div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="fileInput" class="form-label">File to print</label>
-                                <input id="fileInput" name="file" type="file" required class="form-control"
-                                    accept=".pdf,.jpg,.jpeg" />
-                                <div class="form-text">Accepted: .pdf, .jpg, .jpeg</div>
-                                <div class="invalid-feedback">Please supply a PDF or JPG file.</div>
-                            </div>
-
-                            <div class="row g-3 mb-3">
-                                <div class="col-12 col-sm-4">
-                                    <label for="copies" class="form-label">Copies</label>
-                                    <input id="copies" name="copies" type="number" class="form-control" min="1"
-                                        value="1" required />
-                                    <div class="invalid-feedback">Enter a number ≥ 1.</div>
+                            <div class="col-9">
+                                <label class="form-label">Printer options (optional)</label>
+                                <div class="input-group mb-2">
+                                    <input id="optionName" class="form-control"
+                                        placeholder="Option name (e.g. sides)" />
+                                    <span class="input-group-text">=</span>
+                                    <input id="optionValue" class="form-control"
+                                        placeholder="Value (e.g. two-sided-long-edge)" />
+                                    <button type="button" id="addOptionBtn" class="btn btn-outline-primary">Add</button>
                                 </div>
-
-                                <div class="col-12 col-sm-8">
-                                    <label class="form-label">Printer options (optional)</label>
-                                    <div class="input-group mb-2">
-                                        <label for="optionInput">Options</label>
-                                        <input id="optionInput" class="form-control"
-                                            placeholder="e.g. sides=two-sided-long-edge" />
-                                        <button type="button" id="addOptionBtn" class="btn btn-outline-primary">Add
-                                        </button>
-                                    </div>
-
-                                    <div id="optionsList" class="d-flex flex-wrap gap-2"></div>
-                                    <div class="form-text">Examples: <code>sides=two-sided-long-edge</code>,
-                                        <code>media=A4</code>, <code>print-quality=3</code>
+                                <div class="mb-2">
+                                    <a class="text-decoration-none" data-bs-toggle="collapse" href="#optionsHelp"
+                                        role="button" aria-expanded="false">
+                                        Show common options ▾
+                                    </a>
+                                    <div class="collapse" id="optionsHelp">
+                                        <div class="form-text">
+                                            <pre class="mb-2 p-3">
+-o job-sheets=standard          Print a banner page with the job
+-o media=size                   Specify the media size to use
+-o number-up=N                  Specify that input pages should be printed N-up (1, 2, 4, 6, 9, and 16 are supported)
+-o orientation-requested=N      Specify portrait (3) or landscape (4) orientation
+-o print-quality=N              Specify the print quality - draft (3), normal (4), or best (5)
+-o sides=one-sided              Specify 1-sided printing
+-o sides=two-sided-long-edge    Specify 2-sided portrait printing
+-o sides=two-sided-short-edge   Specify 2-sided landscape printing
+</pre>
+                                        </div>
                                     </div>
                                 </div>
+                                <div id="optionsList" class="d-flex flex-wrap gap-2"></div>
                             </div>
-
-                            <div class="d-flex align-items-center gap-2">
+                        </div>
+                        <hr />
+                        <div class="row mb-2 p-2">
+                            <div class="col-3">
                                 <button id="submitBtn" type="submit" class="btn btn-primary">
                                     <span id="submitSpinner" class="spinner-grow spinner-grow-sm visually-hidden"
                                         role="status" aria-hidden="true"></span>
                                     <span id="submitText">Send to Printer</span>
                                 </button>
-                                <button id="resetBtn" type="button" class="btn btn-outline-secondary">Reset</button>
-                                <div id="statusBadge" class="ms-auto"></div>
                             </div>
-                        </form>
-
-                        <div id="statusBox" class="mt-1 p-1 border rounded" aria-live="polite">
-                            <strong>Status:</strong> <span id="statusMessage">Idle</span>
+                            <div class="col-2">
+                                <button id="resetBtn" type="button" class="btn btn-outline-secondary">Reset</button>
+                            </div>
+                            <div class="col-2">
+                                <div id="statusBadge"></div>
+                            </div>
                         </div>
+                    </form>
+
+                    <div id="statusBox" class="p-1 border rounded" aria-live="polite">
+                        <strong>Status:</strong> <span id="statusMessage">Idle</span>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 

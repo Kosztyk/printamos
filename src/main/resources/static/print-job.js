@@ -1,7 +1,8 @@
 (function () {
   const form = document.getElementById('printForm');
   const addOptionBtn = document.getElementById('addOptionBtn');
-  const optionInput = document.getElementById('optionInput');
+  const optionName = document.getElementById('optionName');
+  const optionValue = document.getElementById('optionValue');
   const optionsList = document.getElementById('optionsList');
   const statusMessage = document.getElementById('statusMessage');
   const submitBtn = document.getElementById('submitBtn');
@@ -10,7 +11,7 @@
   const statusBadge = document.getElementById('statusBadge');
   const resetBtn = document.getElementById('resetBtn');
   const printerSelect = document.getElementById('printerSelect');
-  let options = [];
+  let options = ['media=A4', 'print-quality=3'];
 
   function renderOptions() {
     optionsList.innerHTML = '';
@@ -39,23 +40,28 @@
   }
 
   addOptionBtn.addEventListener('click', () => {
-    const val = optionInput.value.trim();
-    if (!val) return;
-    if (val.length > 256) {
+    const name = optionName.value.trim();
+    const value = optionValue.value.trim();
+    if (!name || !value) return;
+    const option = `${name}=${value}`;
+    if (option.length > 256) {
       alert('Option too long (max 256 characters).');
       return;
     }
-    options.push(val);
-    optionInput.value = '';
-    optionInput.focus();
+    options.push(option);
+    optionName.value = '';
+    optionValue.value = '';
+    optionName.focus();
     renderOptions();
   });
 
-  optionInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addOptionBtn.click();
-    }
+  [optionName, optionValue].forEach(input => {
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addOptionBtn.click();
+      }
+    });
   });
 
   resetBtn.addEventListener('click', () => {
@@ -135,8 +141,12 @@
     }
   });
 
-  // Disable submit if no printers
+  // Initialize on page load
   document.addEventListener('DOMContentLoaded', () => {
+    // Render default options
+    renderOptions();
+
+    // Disable submit if no printers
     if (printerSelect && printerSelect.options.length === 0) {
       submitBtn.disabled = true;
       showStatus('No printers available.', 'text-warning');
