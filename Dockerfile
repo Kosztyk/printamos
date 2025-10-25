@@ -29,4 +29,4 @@ USER appuser
 # Expose the port for the Java server (8080)
 EXPOSE 8080
 
-CMD ["sh", "-c", "cupsd && java --enable-native-access=ALL-UNNAMED -jar /app/server.jar"]
+CMD ["sh", "-c", "cupsd -c /etc/cups/cupsd.conf -s /etc/cups/cups-files.conf && java --enable-native-access=ALL-UNNAMED -jar /app/server.jar"]
