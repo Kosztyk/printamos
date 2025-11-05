@@ -25,6 +25,9 @@ RUN chmod +x /app/entrypoint.sh
 
 USER appuser
 
+# Printamos Web UI
 EXPOSE 8080
+# Cups Admin
+EXPOSE 631
 
 ENTRYPOINT ["/sbin/tini", "--", "/app/entrypoint.sh"]

@@ -11,7 +11,12 @@
   const statusBadge = document.getElementById('statusBadge');
   const resetBtn = document.getElementById('resetBtn');
   const printerSelect = document.getElementById('printerSelect');
-  let options = ['media=iso_a4_210x297mm', 'print-quality=3', 'sides=one-sided'];
+  let options = [
+    'printer-error-policy=abort-job',
+    'media=iso_a4_210x297mm',
+    'print-quality=3',
+    'sides=one-sided'
+  ];
 
   function renderOptions() {
     optionsList.innerHTML = '';
