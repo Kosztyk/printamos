@@ -5,6 +5,7 @@ RUN apk add --no-cache \
     cups \
     cups-filters \
     dbus \
+    ipptool \
     tini \
     && addgroup -S appgroup \
     && adduser -S -G appgroup appuser \
