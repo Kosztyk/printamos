@@ -4,6 +4,8 @@ FROM eclipse-temurin:25-jre-alpine
 RUN apk add --no-cache \
     cups \
     cups-filters \
+    brlaser \
+    epson-inkjet-printer-escpr \
     dbus \
     ipptool \
     tini \

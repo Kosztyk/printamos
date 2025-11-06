@@ -30,65 +30,6 @@
 <body>
     <div class="container py-4 justify-content-center">
 
-        <!-- Manage Printers -->
-        <div class="col-12 col-md-10 col-lg-8 mb-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h3>Manage Printers</h3>
-
-                    <!-- Add printer -->
-                    <form id="addPrinterForm" class="mb-2 needs-validation" novalidate>
-                        <h5>Add Printer</h5>
-                        <div class="mb-2">
-                            <label for="addPrinterName">Printer Name</label>
-                            <input id="addPrinterName" name="printer_name" type="text" class="form-control" required
-                                placeholder="Printer name" pattern="^[a-zA-Z0-9_\-]{1,128}$">
-                        </div>
-                        <div class="mb-2">
-                            <label for="addPrinterUri">Printer Uri</label>
-                            <input id="addPrinterUri" name="printer_uri" type="text" class="form-control" required
-                                placeholder="Printer URI (e.g. ipp://192.168.1.100/ipp/print)">
-                            <div class="mb-2">
-                                <a class="text-decoration-none" data-bs-toggle="collapse" href="#uriHelp" role="button"
-                                    aria-expanded="false">
-                                    Show example URIs ▾
-                                </a>
-                                <div class="collapse" id="uriHelp">
-                                    <div class="form-text">
-                                        <pre class="mb-2 p-3">
-ipp://192.168.33.3/ipp/print        IPP printer (most modern network printers)
-lpd://192.168.1.100/queue           LPD printer (legacy printers)
-socket://192.168.1.100:9100         Socket/JetDirect printer
-http://192.168.1.100:631/printers/  HTTP printer (some network printers)
-usb://manufacturer/model            USB printer
-file:///dev/null                    Mock printer (for testing)
-</pre>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-2">
-                            <label for="addPrinterModel">Printer Model</label>
-                            <input id="addPrinterModel" name="printer_model" type="text" class="form-control"
-                                placeholder="Model/PPD (optional, e.g. everywhere)">
-                        </div>
-                        <hr />
-                        <button type="submit" id="addPrinterBtn" class="btn btn-success btn-sm">Add Printer</button>
-                    </form>
-
-                    <div id="printerStatusBox" class="p-2 border rounded bg-dark-subtle small mb-2">
-                        <strong>Status:</strong> <span id="printerStatusMessage">Idle</span>
-                    </div>
-
-                    <!-- Printers list -->
-                    <div>
-                        <h6>Available Printers</h6>
-                        <ul id="printersList" class="list-group small"></ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Upload & Print -->
         <div class="col-12 col-md-10 col-lg-8">
             <div class="card shadow-sm">
