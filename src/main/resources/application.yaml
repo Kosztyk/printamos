@@ -3,4 +3,4 @@ ktor:
         modules:
             - com.pswidersk.ApplicationKt.module
     deployment:
-        port: 8080
+        port: ${KTOR_PORT:8080}
