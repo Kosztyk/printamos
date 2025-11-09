@@ -1,7 +1,14 @@
 #!/bin/sh
-# Minimal entrypoint: start cupsd (if present) and exec Java.
-# This does not wait for cupsd to become ready.
+# Start avahi-daemon without dbus in background
+echo "Starting avahi-daemon..."
+avahi-daemon --no-drop-root --no-rlimits --debug > /var/log/cups/avahi 2>&1 &
 
+# Start cups-browsed in background
+echo "Starting cups-browsed..."
+cups-browsed --logfile &
+# Or just cups-browsed & to run in background without debug
+
+# Start cupsd if available
 if command -v cupsd >/dev/null 2>&1; then
   echo "Starting cupsd..."
   # Start cupsd and allow it to daemonize; fail the container if it cannot start.
@@ -11,5 +18,5 @@ if command -v cupsd >/dev/null 2>&1; then
   fi
 fi
 
-# Replace the shell with the Java process so it receives signals correctly.
+# Finally, exec Java process, replacing the shell to allow signal propagation
 exec java --enable-native-access=ALL-UNNAMED -jar /app/server.jar
