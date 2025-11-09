@@ -22,7 +22,7 @@ fun Route.printerRouting() {
                 .map {
                     val parts = it.split(" ")
                     val name = if (parts.size > 2) {
-                        it.split(" ")[2]
+                        it.split(" ")[2].substringBefore(":")
                     } else {
                         "NaN"
                     }
