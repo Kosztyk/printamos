@@ -10,16 +10,8 @@ Simple app to upload printing jobs in a home internal network with a web UI.
 
 - Uses the [OpenPrinting CUPS](https://openprinting.github.io/cups/) tool as backend.
 - Drag & Drop files printing.
-- Support for the PDF, PNG, JPG files.
-- Minimal Docker Alpine image ~360MB.
+- Minimal Docker Alpine image ~400MB.
 - Ktor Server API.
-
-## UI
-
-Frontend app lets the user add the printers and print the files with
-a simple select window or drag and drop.
-
-![FE Application](img/ui.png)
 
 ## Docker Compose
 
@@ -40,5 +32,13 @@ It is possible to easily add the Printamos service as follows:
 
 The Printamos Web UI will be available at `http://localhost:8097` on host.
 Standard CUPS Admin Web UI to manage printers should be also available at `http://localhost:8098`.
+
+## Usage
+
+Frontend app lets the user printing the files with a simple select window or drag and drop.
+
+![FE Application](img/ui.png)
+
+Managing the printers or checking active jobs can still be done with CUPS Admin Web UI.
 
 ## [Releases](https://github.com/PrzemyslawSwiderski/printamos/releases)

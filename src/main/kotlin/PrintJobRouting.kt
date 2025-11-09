@@ -8,13 +8,6 @@ import io.ktor.server.routing.*
 import io.ktor.utils.io.jvm.javaio.*
 import java.nio.file.Files
 
-private val validFileSuffixes = setOf(
-    ".pdf",
-    ".jpg",
-    ".jpeg",
-    ".png"
-)
-
 fun Route.printJobRouting() {
 
     post("/print-job") {
@@ -58,14 +51,7 @@ fun Route.printJobRouting() {
         }
 
         val fileName = file.originalFileName?.lowercase() ?: "uploaded_file"
-        val isValidFileType = validFileSuffixes.any {
-            fileName.endsWith(it)
-        }
 
-        if (!isValidFileType) {
-            call.respond(HttpStatusCode.BadRequest, "Invalid file type (must be PDF, JPG or PNG)")
-            return@post
-        }
         val tempFile = Files.createTempFile("print_", "_$fileName").toFile()
         try {
             tempFile.writeBytes(fileContent)
@@ -89,22 +75,6 @@ fun Route.printJobRouting() {
             call.respond(HttpStatusCode.InternalServerError, "Error processing print job: ${e.message}")
         } finally {
             tempFile.delete()
-        }
-    }
-
-    get("/list-jobs") {
-        val command = listOf(
-            "lpstat",
-            "-E",
-            "-lW", "all"
-        )
-
-        val out = execCommand(command)
-
-        if (out.success) {
-            call.respond(HttpStatusCode.OK, out.output.ifEmpty { "No output" })
-        } else {
-            call.respond(HttpStatusCode.InternalServerError, out.errorMessage)
         }
     }
 

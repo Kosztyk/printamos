@@ -15,7 +15,6 @@ fun Application.configureRouting() {
         route("/api/v1") {
             printerRouting()
             printJobRouting()
-            printOptionsRouting()
         }
         swaggerUI(path = "openapi")
     }
