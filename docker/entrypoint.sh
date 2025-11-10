@@ -1,5 +1,13 @@
 #!/bin/sh
-# Start avahi-daemon without dbus in background
+
+# Start dbus
+echo "Starting dbus-daemon..."
+mkdir -p /run/dbus
+dbus-daemon --system > /var/log/cups/dbus 2>&1 &
+
+sleep 2
+
+# Start avahi-daemon
 echo "Starting avahi-daemon..."
 avahi-daemon --no-drop-root --no-rlimits --debug > /var/log/cups/avahi 2>&1 &
 
