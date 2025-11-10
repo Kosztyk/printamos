@@ -3,6 +3,7 @@ FROM eclipse-temurin:25-jre-alpine
 # Install runtime packages and tini (small init)
 RUN apk add --no-cache \
     avahi \
+    avahi-tools \
     cups \
     cups-filters \
     brlaser \
