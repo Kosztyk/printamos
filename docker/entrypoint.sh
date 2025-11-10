@@ -3,11 +3,6 @@
 echo "Starting avahi-daemon..."
 avahi-daemon --no-drop-root --no-rlimits --debug > /var/log/cups/avahi 2>&1 &
 
-# Start cups-browsed in background
-echo "Starting cups-browsed..."
-cups-browsed --logfile &
-# Or just cups-browsed & to run in background without debug
-
 # Start cupsd if available
 if command -v cupsd >/dev/null 2>&1; then
   echo "Starting cupsd..."
@@ -17,6 +12,14 @@ if command -v cupsd >/dev/null 2>&1; then
     exit 1
   fi
 fi
+
+# Wait a moment, then start cups-browsed
+sleep 2
+
+# Start cups-browsed in background
+echo "Starting cups-browsed..."
+cups-browsed --logfile &
+# Or just cups-browsed & to run in background without debug
 
 # Finally, exec Java process, replacing the shell to allow signal propagation
 exec java --enable-native-access=ALL-UNNAMED -jar /app/server.jar
