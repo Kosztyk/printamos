@@ -15,6 +15,7 @@ Frontend app lets the user printing the files with a simple select window or dra
 ## Features
 
 - Auto-discovers the printer with Avahi.
+- Bootstrap based fully responsive styling.
 - Uses the [OpenPrinting CUPS](https://openprinting.github.io/cups/) tool as backend.
 - Drag & Drop files printing.
 - Minimal Docker Alpine image ~400MB.
