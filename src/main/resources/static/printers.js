@@ -9,7 +9,7 @@
       printers.forEach((printer) => {
         const opt = document.createElement('option');
         opt.value = printer.name;
-        opt.textContent = `${printer.name} – ${printer.description || ''}`;
+        opt.textContent = `${printer.name}`;
         printerSelect.appendChild(opt);
       });
     }
@@ -21,7 +21,9 @@
     try {
       const resp = await fetch('/api/v1/printers');
       if (!resp.ok) {
-        console.error(`Error (${resp.status})`);
+        const errorMsg = `Error (${resp.statusText})`;
+        console.error(errorMsg);
+        printerSelect.innerHTML = `<option value="" disabled selected>${errorMsg}</option>`;
         return;
       }
       const data = await resp.json();

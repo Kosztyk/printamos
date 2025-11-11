@@ -6,8 +6,16 @@
 
 Simple app to upload printing jobs in a home internal network with a web UI.
 
+## Usage
+
+Frontend app lets the user printing the files with a simple select window or drag and drop.
+
+![FE Application](img/ui.png)
+
 ## Features
 
+- Auto-discovers the printer with Avahi.
+- Bootstrap based fully responsive styling.
 - Uses the [OpenPrinting CUPS](https://openprinting.github.io/cups/) tool as backend.
 - Drag & Drop files printing.
 - Minimal Docker Alpine image ~400MB.
@@ -21,24 +29,20 @@ It is possible to easily add the Printamos service as follows:
   printamos:
     container_name: "printamos"
     image: "ghcr.io/przemyslawswiderski/printamos:latest"
-    ports:
-      - "8097:8080"
-      - "8098:631"
     volumes:
       - "printamos-data:/etc/cups"
+    network_mode: "host"
     environment:
       PUBLIC_HOSTNAME: "printamos-example.com" # Public host name for the CSRF allowance
+      TZ: "Europe/Warsaw"
+      KTOR_PORT: "8097"
+    restart: "always"
+    tmpfs:
+      - "/run" # Needed for the clean restart possibility
+      - "/tmp"
 ```
 
 The Printamos Web UI will be available at `http://localhost:8097` on host.
-Standard CUPS Admin Web UI to manage printers should be also available at `http://localhost:8098`.
-
-## Usage
-
-Frontend app lets the user printing the files with a simple select window or drag and drop.
-
-![FE Application](img/ui.png)
-
-Managing the printers or checking active jobs can still be done with CUPS Admin Web UI.
+Standard CUPS Admin Web UI to manage printers should be also available at `http://localhost:631`.
 
 ## [Releases](https://github.com/PrzemyslawSwiderski/printamos/releases)

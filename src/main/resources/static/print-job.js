@@ -88,7 +88,6 @@
 
     const selectedPrinter = printerSelect.value;
     if (!selectedPrinter) {
-      showStatus('Please select a printer.', 'text-warning');
       return;
     }
 
@@ -141,35 +140,27 @@
   document.addEventListener('DOMContentLoaded', () => {
     // Render default options
     renderOptions();
-
-    // Disable submit if no printers
-    if (printerSelect && printerSelect.options.length === 0) {
-      submitBtn.disabled = true;
-      showStatus('No printers available.', 'text-warning');
-    }
   });
 
   // Drag-and-drop support
   (function addDragDrop() {
     const fileEl = document.getElementById('fileInput');
-    const parent = fileEl.closest('.mb-3');
-    if (!parent) return;
 
     ['dragenter', 'dragover'].forEach(evt => {
-      parent.addEventListener(evt, (e) => {
+      fileEl.addEventListener(evt, (e) => {
         e.preventDefault();
         e.stopPropagation();
-        parent.classList.add('border-primary');
+        fileEl.classList.add('border-success');
       });
     });
     ['dragleave', 'drop'].forEach(evt => {
-      parent.addEventListener(evt, (e) => {
+      fileEl.addEventListener(evt, (e) => {
         e.preventDefault();
         e.stopPropagation();
-        parent.classList.remove('border-primary');
+        fileEl.classList.remove('border-success');
       });
     });
-    parent.addEventListener('drop', (e) => {
+    fileEl.addEventListener('drop', (e) => {
       const dt = e.dataTransfer;
       if (dt?.files?.length) {
         fileEl.files = dt.files;

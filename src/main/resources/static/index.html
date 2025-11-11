@@ -40,31 +40,13 @@
                         <div class="mb-2">
                             <label for="printerSelect" class="form-label">Select Printer</label>
                             <select id="printerSelect" name="printer_name" required class="form-select">
-                                <option value="" selected disabled>Loading printers...</option>
                             </select>
                             <div class="invalid-feedback">Please select a printer.</div>
                         </div>
 
-                        <!-- Show Options link (appears only when a printer is selected) -->
-                        <div class="mb-2">
-                            <a id="showOptionsLink" class="text-decoration-none d-none" data-bs-toggle="collapse"
-                                href="#listOptionsCollapse" role="button" aria-expanded="false">
-                                <span id="showOptionsSpinner" class="spinner-grow spinner-grow-sm visually-hidden"
-                                    role="status" aria-hidden="true"></span>
-                                Show Options ▾
-                            </a>
-                        </div>
-
-                        <div class="collapse mt-2" id="listOptionsCollapse">
-                            <div class="card card-body bg-dark-subtle small">
-                                <strong>Printer options:</strong>
-                                <pre id="listOptionsBox" class="mb-0">No options loaded.</pre>
-                            </div>
-                        </div>
-
                         <div class="mb-2">
                             <label for="fileInput" class="form-label">File to print</label>
-                            <input id="fileInput" name="file" type="file" required class="form-control p-4"
+                            <input id="fileInput" name="file" type="file" required class="form-control form-control-lg p-5"
                                 accept=".pdf,.jpg,.jpeg,.gif,.png" style="min-height: 100px; cursor: pointer;" />
                             <div class="form-text">Accepted: .pdf, .jpg, .jpeg, .gif, .png</div>
                             <div class="invalid-feedback">Please supply a valid file.</div>
@@ -86,7 +68,7 @@
                                     <span class="input-group-text">=</span>
                                     <input id="optionValue" class="form-control"
                                         placeholder="Value (e.g. two-sided-long-edge)" />
-                                    <button type="button" id="addOptionBtn" class="btn btn-outline-primary">Add</button>
+                                    <button type="button" id="addOptionBtn" class="btn btn-primary">Add</button>
                                 </div>
                                 <div class="mb-2">
                                     <a class="text-decoration-none" data-bs-toggle="collapse" href="#optionsHelp"
@@ -113,14 +95,14 @@
                         </div>
                         <hr />
                         <div class="row mb-2 p-2">
-                            <div class="col-3">
-                                <button id="submitBtn" type="submit" class="btn btn-primary">
+                            <div class="col-6">
+                                <button id="submitBtn" type="submit" class="btn btn-success">
                                     <span id="submitSpinner" class="spinner-grow spinner-grow-sm visually-hidden"
                                         role="status" aria-hidden="true"></span>
                                     <span id="submitText">Send to Printer</span>
                                 </button>
                             </div>
-                            <div class="col-2">
+                            <div class="col-4">
                                 <button id="resetBtn" type="button" class="btn btn-outline-secondary">Reset</button>
                             </div>
                             <div class="col-2">
