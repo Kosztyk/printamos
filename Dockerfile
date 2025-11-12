@@ -1,4 +1,4 @@
-FROM eclipse-temurin:25-jre-alpine
+FROM eclipse-temurin:25-jre-alpine-3.21
 
 # Install runtime packages and tini (small init)
 RUN apk add --no-cache \
