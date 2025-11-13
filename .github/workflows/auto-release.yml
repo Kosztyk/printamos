@@ -34,9 +34,6 @@ jobs:
           # Create and push the tag
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
-          git tag -a "$DRAFT_TAG" -m "Release $DRAFT_TAG"
-          git push origin "$DRAFT_TAG"
-          echo "Created and pushed tag: $DRAFT_TAG"
           
           # Publish the draft release
           gh release edit "$DRAFT_TAG" --draft=false
