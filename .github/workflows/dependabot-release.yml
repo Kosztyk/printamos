@@ -7,8 +7,7 @@ on:
 jobs:
   auto-release:
     # Only run if the push was from a merged Dependabot PR
-    if: >
-      ${{ github.event.before != '0000000000000000000000000000000000000000' && github.event.commits[0].author.name == 'dependabot[bot]' }}
+    if: github.actor == 'dependabot[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: write # full write for releases
@@ -31,3 +30,4 @@ jobs:
         with:
           tag_name: v${{ steps.version.outputs.version }}
           generate_release_notes: true
+          draft: false

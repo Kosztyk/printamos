@@ -6,3 +6,12 @@ updates:
       interval: weekly
     labels:
       - chore
+
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+    labels:
+      - "chore"
