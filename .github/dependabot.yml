@@ -1,11 +1,11 @@
 version: 2
 updates:
-  - package-ecosystem: docker
+  - package-ecosystem: "docker"
     directory: "/"
     schedule:
-      interval: weekly
+      interval: "weekly"
     labels:
-      - chore
+      - "chore"
     groups:
       docker-updates:
         patterns:
