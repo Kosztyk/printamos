@@ -40,6 +40,7 @@ jobs:
 
   build-and-push:
     permissions:
+      contents: read
       packages: write          # required by docker/build-push-action
       attestations: write      # required by actions/attest-build-provenance
       id-token: write          # required for provenance
