@@ -39,6 +39,11 @@ jobs:
           echo "Published release: ${{ steps.find.outputs.tag }}"
 
   build-and-push:
+    permissions:
+      packages: write          # required by docker/build-push-action
+      attestations: write      # required by actions/attest-build-provenance
+      id-token: write          # required for provenance
+
     needs: publish-draft
     if: needs.publish-draft.outputs.tag != ''
     uses: ./.github/workflows/docker-push.yml
