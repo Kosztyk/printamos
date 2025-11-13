@@ -6,12 +6,18 @@ updates:
       interval: weekly
     labels:
       - chore
+    groups:
+      docker-updates:
+        patterns:
+          - "*"
 
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "08:00"
     labels:
       - "chore"
+    groups:
+      gradle-dependencies:
+        patterns:
+          - "*"

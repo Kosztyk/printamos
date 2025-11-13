@@ -1,0 +1,57 @@
+name: 🤖 Auto-Release
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Run on Tuesdays at 12 PM UTC
+    - cron: "0 12 * * 2"
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  auto-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Check for new commits since last release
+        id: check-commits
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+          if [ -z "$LATEST_TAG" ]; then
+            echo "has_new_commits=true" >> $GITHUB_OUTPUT
+            echo "No previous releases found"
+          else
+            COMMITS=$(git log ${LATEST_TAG}..HEAD --oneline)
+            if [ -z "$COMMITS" ]; then
+              echo "has_new_commits=false" >> $GITHUB_OUTPUT
+              echo "No new commits since $LATEST_TAG"
+            else
+              echo "has_new_commits=true" >> $GITHUB_OUTPUT
+              echo "New commits since $LATEST_TAG:"
+              echo "$COMMITS"
+            fi
+          fi
+
+      - name: Bump version and generate changelog
+        if: steps.check-commits.outputs.has_new_commits == 'true'
+        id: version
+        uses: paulhatch/semantic-version@v5.4.0
+        with:
+          tag_prefix: "v"
+
+      - name: Create Release
+        if: steps.check-commits.outputs.has_new_commits == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          generate_release_notes: true
+          draft: false
