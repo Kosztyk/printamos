@@ -7,8 +7,7 @@ on:
 jobs:
   auto-merge:
     if: >
-      ${{ github.actor == 'dependabot[bot]' &&
-          github.event.pull_request.merged == false }}
+      ${{ github.actor == 'dependabot[bot]' && github.event.pull_request.merged == false }}
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -35,27 +34,3 @@ jobs:
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  release:
-    needs: auto-merge
-    if: >
-      ${{ github.event.pull_request.merged == true &&
-          github.actor == 'dependabot[bot]' &&
-          startsWith(github.event.pull_request.head.ref, 'dependabot/') }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Bump version and generate changelog
-        id: version
-        uses: paulhatch/semantic-version@v5.4.0
-        with:
-          tag_prefix: "v"
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ steps.version.outputs.version }}
-          generate_release_notes: true
