@@ -1,4 +1,4 @@
-name: 🤖 Dependabot Auto-merge & Release
+name: 🤖 Dependabot With Auto-merge
 
 on:
   pull_request:
@@ -27,7 +27,7 @@ jobs:
       - name: Build and Test
         run: ./gradlew --no-daemon build
 
-      - name: Enable auto-merge
+      - name: Auto-merge
         run: |
           gh pr merge --auto --squash --delete-branch "$PR_URL"
         env:
