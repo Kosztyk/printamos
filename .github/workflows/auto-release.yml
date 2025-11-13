@@ -12,25 +12,32 @@ jobs:
       contents: write
 
     steps:
-      - name: Publish latest draft release
-        uses: actions/github-script@v7
+      - name: Checkout repository
+        uses: actions/checkout@v5
         with:
-          script: |
-            const { data: releases } = await github.rest.repos.listReleases({
-              owner: context.repo.owner,
-              repo: context.repo.repo
-            });
+          fetch-depth: 0
 
-            const draftRelease = releases.find(release => release.draft);
-
-            if (draftRelease) {
-              await github.rest.repos.updateRelease({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                release_id: draftRelease.id,
-                draft: false
-              });
-              console.log(`Published draft release: ${draftRelease.tag_name}`);
-            } else {
-              console.log('No draft releases found');
-            }
+      - name: Find and publish draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Get the latest draft release tag
+          DRAFT_TAG=$(gh release list --limit 100 --json tagName,isDraft --jq '.[] | select(.isDraft == true) | .tagName' | head -n 1)
+          
+          if [ -z "$DRAFT_TAG" ]; then
+            echo "No draft releases found"
+            exit 0
+          fi
+          
+          echo "Found draft release: $DRAFT_TAG"
+          
+          # Create and push the tag
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git tag -a "$DRAFT_TAG" -m "Release $DRAFT_TAG"
+          git push origin "$DRAFT_TAG"
+          echo "Created and pushed tag: $DRAFT_TAG"
+          
+          # Publish the draft release
+          gh release edit "$DRAFT_TAG" --draft=false
+          echo "Published draft release: $DRAFT_TAG"
