@@ -1,5 +1,5 @@
 [![🤖 Auto Publish Draft Release](https://github.com/PrzemyslawSwiderski/printamos/actions/workflows/auto-release.yml/badge.svg)](https://github.com/PrzemyslawSwiderski/printamos/actions/workflows/auto-release.yml)
-[![🐳 Build + Publish Multi-Platform Image](https://github.com/PrzemyslawSwiderski/printamos/actions/workflows/docker-push.yml/badge.svg)](https://github.com/PrzemyslawSwiderski/printamos/actions/workflows/docker-push.yml)
+[![🥁 Build](https://github.com/PrzemyslawSwiderski/printamos/actions/workflows/build.yml/badge.svg)](https://github.com/PrzemyslawSwiderski/printamos/actions/workflows/build.yml)
 
 # Printamos
 
